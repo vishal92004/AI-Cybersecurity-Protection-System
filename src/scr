@@ -1,0 +1,18 @@
+from flask import Flask, request, jsonify
+from phishing_detection import analyze_url
+
+app = Flask(__name__)
+
+@app.route("/health")
+def health():
+    return jsonify({"status":"ok"})
+
+@app.route("/check-url", methods=["POST"])
+def check_url():
+    data = request.json
+    url = data.get("url")
+    score, reason = analyze_url(url)
+    return jsonify({"url": url, "risk_score": score, "reason": reason})
+
+if __name__ == "__main__":
+    app.run(debug=True, port=5000)
